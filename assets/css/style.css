@@ -1,0 +1,19 @@
+/* .header {
+    font-size: xx-large;
+    color: navy;
+    text-align: center;
+    font-family: arial;
+} */
+  .button {
+      background-color: lightgrey;
+      color: navy;
+      font-size: 20px;
+      margin: 5px;
+      
+  }
+  img {
+    max-height: 150px;
+  }
+img:hover {
+    filter: drop-shadow(16px 16px 20px blue);  
+}

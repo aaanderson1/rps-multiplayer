@@ -1,9 +1,32 @@
 <html>
-    <body>
-        <script src="assets/src/database.js"></script>
-        <script src="assets/src/game.js"></script>
-        <script>
-            const game = new Game();
-        </script>
-    </body>
+
+<body>
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <meta charset="utf-8">
+    <title>Rock Paper Scissors</title>
+    <div id="header" class="header">Rock Paper Scissors</div>
+
+    <div id="play-area">
+
+        <div id="player-area">
+            <span>
+
+                <img src="assets/images/rock.jpg" id="rock">
+
+                <img src="assets/images/paper.jpg" id="paper">
+
+                <img src="assets/images/scissors.jpg" id="scissors">
+
+            </span>
+        </div>
+    </div>
+
+    <script src="assets/src/database.js"></script>
+    <script src="assets/src/game.js"></script>
+    <script>
+        const game = new Game();
+    </script>
+</body>
+
 </html>
