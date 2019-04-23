@@ -11,9 +11,9 @@
       margin: 5px;
       
   }
-  img {
+  img.button {
     max-height: 150px;
   }
-img:hover {
+img.button:hover {
     filter: drop-shadow(16px 16px 20px blue);  
 }

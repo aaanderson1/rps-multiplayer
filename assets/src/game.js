@@ -28,10 +28,11 @@ class Game {
     constructor(){
         this.database = new Database();
         this.playerData = this.findPlayerData();
-        this.opponentData = this.findOpponentData();
-        this.database.onSetValue(this.opponentData.playerID, this.handleOpponent.bind(this));
+        this.opponentData = new PlayerData();
+        let opponentData = this.findOpponentData();
+        this.database.onSetValue(opponentData.playerID, this.handleOpponent.bind(this));
         this.database.onSetValue(this.playerData.playerID, this.handlePlayer.bind(this));
-        this.database.setValue(this.opponentData.playerID, this.opponentData);
+        setTimeout(() => this.database.setValue(opponentData.playerID, opponentData), 3000);
         let rock = document.getElementById("rock");
         rock.addEventListener("click", () => this.handleClick("rock"));
         let paper = document.getElementById("paper");
