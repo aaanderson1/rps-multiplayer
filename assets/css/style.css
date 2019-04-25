@@ -8,12 +8,33 @@
       background-color: lightgrey;
       color: navy;
       font-size: 20px;
-      margin: 5px;
-      
+      margin: 5px; 
   }
   img.button {
     max-height: 150px;
   }
 img.button:hover {
-    filter: drop-shadow(16px 16px 20px blue);  
+    filter: drop-shadow(5px 5px 10px blue);  
+}
+.action-image {
+    background-color: lightgrey;
+    color: navy;
+    font-size: 20px;
+    margin: 5px; 
+    max-height: 150px;
+}
+.vs {
+    margin: auto;
+    text-align: center;
+    display: inline-block;
+    height: 150px; 
+    width: 150px;
+    vertical-align: middle;
+}
+.play-again-button {
+
+}
+.play-again-area {
+    padding-left: 200px;
+    display: none;
 }
