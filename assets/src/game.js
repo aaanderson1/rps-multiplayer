@@ -16,6 +16,7 @@ class PlayerData {
         this.draws = 0;
         this.turn = null;
         this.playerID = "";
+        this.token = "";
     }
 }
 //2 player game
@@ -28,18 +29,24 @@ const Images = {
     "scissors": "assets/images/scissors.jpg",
 };
 
+function getNewToken() {
+    return Date.now().toString();
+}
 //game logic class
 class Game {
     constructor(){
         //initializing database wrapper. Will be wrapping Firebase data.
         this.database = new Database();
-        this.playerData = this.findPlayerData();
-        this.opponentData = new PlayerData();
-        let opponentData = this.findOpponentData();
+        let opponentData = new PlayerData();
+        opponentData.playerID = Player2;
+        opponentData.turn = "scissors";
+        opponentData.token = getNewToken();
+        this.database.setValue(Player2, opponentData);
         //registering handle functions to database
         //these functions will be called when there is a change at this key 
-        this.database.onSetValue(opponentData.playerID, this.handleOpponent.bind(this));
-        this.database.onSetValue(this.playerData.playerID, this.handlePlayer.bind(this));
+        this.database.onSetValue(Player2, this.handlePlayer.bind(this));
+        this.database.onSetValue(Player1, this.handlePlayer.bind(this));
+        this.setupInitialPlayerState();
         //click action
         let rock = document.getElementById("rock");
         rock.addEventListener("click", () => this.handleClick("rock"));
@@ -58,33 +65,56 @@ class Game {
     }
     //handles incoming player data changes from the database
     handlePlayer(playerData){
-        this.playerData = playerData;
-        console.log(this.playerData);
+        let token = this.getPlayToken();
+        if (!this.checkTokenValidity(token)) {
+            return;
+        }
+        if (playerData && !this.checkTokenValidity(playerData.token)) {
+            return;
+        }
+        if (playerData && token === playerData.token) {
+            this.playerData = playerData;
+        } else {
+            this.opponentData = playerData;
+        }
         this.evaluateThrow();
     }
-    //handles incoming opponent data changes from the database
-    handleOpponent(opponentData){
-        this.opponentData = opponentData;
-        console.log(this.opponentData);
-        this.evaluateThrow();
-    }
-    //to figure out which player you are assigned. You play as player 1 on front end but on database this will be determined in order of arrival.
-    findPlayerData() {
-        let playerData = new PlayerData();
-        playerData.name = "me";
-        playerData.playerID = Player1;
-        return playerData;
-    }
-    //to figure out which opponent you are assigned. You play as player 1 on front end but on database this will be determined in order of arrival.
-    findOpponentData(){
-        let playerData = new PlayerData();
-        playerData.name = "opponent";
-        playerData.playerID = Player2;
-        playerData.turn = "scissors";
-        return playerData;
+    setupInitialPlayerState() {
+        let player1Data = this.database.getValue(Player1);
+        let player2Data = this.database.getValue(Player2);
+        let token = this.getPlayToken();
+        if (!player1Data || !this.checkTokenValidity(player1Data.token)) {
+            let playerData = new PlayerData();
+            playerData.playerID = Player1;
+            playerData.token = getNewToken();
+            this.savePlayToken(playerData.token);
+            this.database.setValue(Player1, playerData);
+            //this.database.setValue(Player2, null);
+            return;
+        }
+        if (this.checkTokenValidity(token) && token === player1Data.token) {
+            player1Data.token = getNewToken();
+            this.savePlayToken(player1Data.token);
+            this.database.setValue(Player1, player1Data);
+            return;
+        }
+
+        if (this.checkTokenValidity(token) && token === player2Data.token) {
+            player2Data.token = getNewToken();
+            this.savePlayToken(player2Data.token);
+            this.database.setValue(Player2, player2Data);
+            return;
+        }
+        if (this.checkTokenValidity(player1Data.token)) {
+            console.log("game already in session");
+        }
     }
     //Evaluates win condition when both players have made a move
     evaluateThrow(){
+        if (!this.playerData) {
+            return;
+        }
+
         if (this.playerData.turn) {
             this.playerMoveImage.src = Images[this.playerData.turn];
         }
@@ -128,5 +158,20 @@ class Game {
         this.playerMoveImage.src = Images["waiting"];
         this.opponentMoveImage.src = Images["waiting"];
         this.playing = true;
+    }
+    savePlayToken(token) {
+        localStorage.setItem("play-token", token);
+    }
+    getPlayToken() {
+        return localStorage.getItem("play-token");
+    }
+    checkTokenValidity(token) {
+        if (!token) {
+            return false;
+        } 
+        if (parseInt(token) > Date.now() + 18000) {
+            return false;
+        }
+        return true;
     }
 }

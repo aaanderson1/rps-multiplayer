@@ -7,13 +7,15 @@ class Database{
     constructor() {
         this.keyValues = {};
         this.keyCallbacks = {};
-
     }
     setValue(key, value){
         this.keyValues[key] = value;
         if (this.keyCallbacks[key]){
             this.keyCallbacks[key](value);
         }
+    }
+    getValue(key){
+        return this.keyValues[key];
     }
     onSetValue(key, callback){
         this.keyCallbacks[key] = callback;
