@@ -38,11 +38,6 @@ class Game {
     constructor(){
         //initializing database wrapper. Will be wrapping Firebase data.
         this.database = new Database();
-        // let opponentData = new PlayerData();
-        // opponentData.playerID = Player2;
-        // opponentData.turn = "scissors";
-        // opponentData.token = getNewToken();
-        // this.database.setValue(Player2, opponentData);
         //registering handle functions to database
         //these functions will be called when there is a change at this key 
         this.database.onSetValue(Player2, this.handlePlayer.bind(this));
@@ -63,6 +58,12 @@ class Game {
         let playAgainButton = document.getElementById("play-again-button");
         playAgainButton.addEventListener("click", this.playAgain.bind(this));
         this.playing = true;
+        this.myWins = document.getElementById("my-wins");
+        this.myLosses = document.getElementById("my-losses");
+        this.myDraws = document.getElementById("my-draws");
+        this.theirWins = document.getElementById("their-wins");
+        this.theirLosses = document.getElementById("their-losses");
+        this.theirDraws = document.getElementById("their-draws");
     }
     //handles incoming player data changes from the database
     handlePlayer(playerData){
@@ -75,8 +76,14 @@ class Game {
         }
         if (playerData && token === playerData.token) {
             this.playerData = playerData;
+            this.myWins.innerHTML = `Wins: ${this.playerData.wins}`;
+            this.myLosses.innerHTML = `Losses: ${this.playerData.losses}`;
+            this.myDraws.innerHTML = `Draws: ${this.playerData.draws}`;
         } else {
             this.opponentData = playerData;
+            this.theirWins.innerHTML = `Wins: ${this.opponentData.wins}`;
+            this.theirLosses.innerHTML = `Losses: ${this.opponentData.losses}`;
+            this.theirDraws.innerHTML = `Draws: ${this.opponentData.draws}`;
         }
         this.evaluateThrow();
     }

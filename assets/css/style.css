@@ -38,3 +38,16 @@ img.button:hover {
     padding-left: 200px;
     display: none;
 }
+.stat-area {
+    overflow: hidden;
+    background-color:lightblue;
+    width: 450px;
+    padding-left: 10px; 
+}
+.stat-area .my-stats {
+    float: left;
+}
+.stat-area .their-stats {
+    float: right;
+    padding-right: 10px;
+}
