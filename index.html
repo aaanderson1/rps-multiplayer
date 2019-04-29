@@ -21,6 +21,21 @@
         </div>
         <div class="play-again-area" id="play-again-area"><button class="play-again-button" id="play-again-button">Play Again?</button></div>
     </div>
+
+    <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase.js"></script>
+    
+    <script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyBvfQDRXObdGcZxLmCTogwx4Swj_MsrhDw",
+        authDomain: "rps-multiplayer-37ca2.firebaseapp.com",
+        databaseURL: "https://rps-multiplayer-37ca2.firebaseio.com",
+        projectId: "rps-multiplayer-37ca2",
+        storageBucket: "rps-multiplayer-37ca2.appspot.com",
+        messagingSenderId: "61779209317"
+    };
+    firebase.initializeApp(config);
+    </script>
     <script src="assets/src/database.js"></script>
     <script src="assets/src/game.js"></script>
     <script>

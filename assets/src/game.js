@@ -17,6 +17,7 @@ class PlayerData {
         this.turn = null;
         this.playerID = "";
         this.token = "";
+        this.reset = false;
     }
 }
 //2 player game
@@ -37,16 +38,16 @@ class Game {
     constructor(){
         //initializing database wrapper. Will be wrapping Firebase data.
         this.database = new Database();
-        let opponentData = new PlayerData();
-        opponentData.playerID = Player2;
-        opponentData.turn = "scissors";
-        opponentData.token = getNewToken();
-        this.database.setValue(Player2, opponentData);
+        // let opponentData = new PlayerData();
+        // opponentData.playerID = Player2;
+        // opponentData.turn = "scissors";
+        // opponentData.token = getNewToken();
+        // this.database.setValue(Player2, opponentData);
         //registering handle functions to database
         //these functions will be called when there is a change at this key 
         this.database.onSetValue(Player2, this.handlePlayer.bind(this));
         this.database.onSetValue(Player1, this.handlePlayer.bind(this));
-        this.setupInitialPlayerState();
+        this.database.getValue(this.setupInitialPlayerState.bind(this));
         //click action
         let rock = document.getElementById("rock");
         rock.addEventListener("click", () => this.handleClick("rock"));
@@ -79,44 +80,64 @@ class Game {
         }
         this.evaluateThrow();
     }
-    setupInitialPlayerState() {
-        let player1Data = this.database.getValue(Player1);
-        let player2Data = this.database.getValue(Player2);
+    setupInitialPlayerState(values) {
+        let player1Data = values[Player1];
+        let player2Data = values[Player2];
         let token = this.getPlayToken();
         if (!player1Data || !this.checkTokenValidity(player1Data.token)) {
             let playerData = new PlayerData();
             playerData.playerID = Player1;
             playerData.token = getNewToken();
+            this.playerData = playerData;
+            this.opponentData = null;
             this.savePlayToken(playerData.token);
             this.database.setValue(Player1, playerData);
-            //this.database.setValue(Player2, null);
+            this.database.setValue(Player2, null);
             return;
         }
         if (this.checkTokenValidity(token) && token === player1Data.token) {
             player1Data.token = getNewToken();
+            this.playerData = player1Data;
+            this.opponentData = player2Data;
             this.savePlayToken(player1Data.token);
             this.database.setValue(Player1, player1Data);
             return;
         }
 
-        if (this.checkTokenValidity(token) && token === player2Data.token) {
+        if (player2Data && this.checkTokenValidity(token) && token === player2Data.token) {
             player2Data.token = getNewToken();
+            this.playerData = player2Data;
+            this.opponentData = player1Data;
             this.savePlayToken(player2Data.token);
             this.database.setValue(Player2, player2Data);
             return;
         }
-        if (this.checkTokenValidity(player1Data.token)) {
-            console.log("game already in session");
-        }
+        this.opponentData = player1Data;
+        let playerData = new PlayerData();
+        playerData.playerID = Player2;
+        playerData.token = getNewToken();
+        this.playerData = playerData;
+        this.savePlayToken(playerData.token);
+        this.savePlayer();
     }
     //Evaluates win condition when both players have made a move
     evaluateThrow(){
         if (!this.playerData) {
             return;
         }
-
+        if (this.playerData.reset) {
+            this.playAgainArea.style.display = "none";
+            this.playerMoveImage.src = Images["waiting"];
+            this.opponentMoveImage.src = Images["waiting"];
+            this.playerData.reset = false;
+            this.savePlayer();
+            this.playing = true;
+        }
         if (this.playerData.turn) {
             this.playerMoveImage.src = Images[this.playerData.turn];
+        }
+        if (!this.opponentData) {
+            return;
         }
         if (!this.playerData.turn || !this.opponentData.turn) {
             return;
@@ -143,7 +164,7 @@ class Game {
     }
     //handling click action from available moves
     handleClick(action){
-        if (!this.playing) {
+        if (!this.playing || !this.playerData) {
             return;
         }
         this.playerData.turn = action;
@@ -157,6 +178,11 @@ class Game {
         this.playAgainArea.style.display = "none";
         this.playerMoveImage.src = Images["waiting"];
         this.opponentMoveImage.src = Images["waiting"];
+        this.playerData.turn = null;
+        this.opponentData.turn = null;
+        this.opponentData.reset = true;
+        this.database.setValue(this.playerData.playerID, this.playerData);
+        this.database.setValue(this.opponentData.playerID, this.opponentData);
         this.playing = true;
     }
     savePlayToken(token) {
