@@ -3,9 +3,13 @@
 - - -
 ## Directions:
 
-• Play by yourself or with a friend
+• Play by yourself to test, or with a friend
 
 • You must open player 1 and player 2 instances in separate browsers or devices.
+
+• Use your mouse or touchscreen to click the photo of the move you want to make
+
+• This app will keep your score overall at the bottom
 
 • Link to the deployed version: https://aaanderson1.github.io/rps-multiplayer/
 
