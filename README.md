@@ -7,7 +7,7 @@
 
 • You must open player 1 and player 2 instances in separate browsers or devices.
 
-• Use your mouse or touchscreen to click the photo of the move you want to make
+• Use your mouse or touchscreen to click the photo to choose your move
 
 • This app will keep your score overall at the bottom
 
